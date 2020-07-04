@@ -19,7 +19,7 @@ MainView::MainView() : ui{new Ui::MainView} {
 }
 
 void MainView::setVersion(std::string version) {
-  ui->groupBox->setTitle(version.c_str());
+  ui->conan_group->setTitle(version.c_str());
 }
 
 void MainView::setPath(std::string path) {

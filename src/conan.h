@@ -18,8 +18,6 @@ struct Conan : public IConan {
     return sout;
   }
 
-  std::string which() const override { return _process->which(); }
-
   std::vector<std::string> profile_list() const override {
     auto [ret_code, sout, serr] = _process->call({"profile", "list"});
 

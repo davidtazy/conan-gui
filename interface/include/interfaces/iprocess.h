@@ -14,6 +14,8 @@ struct OutProcess {
 using Args = std::vector<std::string>;
 
 struct IProcess {
+  virtual void set_executable(std::string path) = 0;
+
   virtual int long_call(const Args& args) = 0;
 
   virtual OutProcess call(const Args& args) = 0;

@@ -5,27 +5,9 @@
 #include <conan.h>
 #include <interfaces/iprocess.h>
 
+#include "mock.h"
+
 using namespace std::string_literals;
-
-struct MockProcess : IProcess {
-  Args _args;
-  OutProcess _out{0, "out", "err"};
-  std::string _path;
-
-  MockProcess(OutProcess out = {}) : IProcess{} { _out = out; }
-
-  int long_call(const Args& args) override {
-    _args = args;
-    return 0;
-  }
-
-  OutProcess call(const Args& args) override {
-    _args = args;
-    return _out;
-  }
-
-  std::string which() override { return _path; }
-};
 
 TEST_CASE("conan --version") {
   auto mock = MockProcess{{0, "Conan version 1.25.2", ""}};

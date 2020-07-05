@@ -7,6 +7,8 @@ namespace conanqt {
 struct Process : public IProcess {
   Process(std::string path) : _path{path} {}
 
+  void set_executable(std::string path) override;
+
   int long_call(const Args& args) override;
 
   OutProcess call(const Args& args) override;

@@ -10,6 +10,10 @@ int Process::long_call(const Args& args) {
   return 255;
 }
 
+void Process::set_executable(std::string path) {
+  _path = path;
+}
+
 using namespace std::literals::string_literals;
 
 OutProcess Process::call(const Args& args) {

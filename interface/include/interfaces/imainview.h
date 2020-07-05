@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <string>
+#include <vector>
+#include "interfaces/iconan.h"
 
 struct IMainView {
   virtual void setVersion(std::string version) = 0;
@@ -11,4 +13,7 @@ struct IMainView {
   virtual void showProfile(std::string profile_path) = 0;
 
   virtual void popupError(std::string error) = 0;
+
+  virtual void setRemotes(const std::vector<IConan::Remote>& remotes) = 0;
+  virtual void onEnableRemote(std::function<void(std::string, bool)> callback) = 0;
 };

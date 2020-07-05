@@ -15,6 +15,8 @@ MainView::MainView() : ui{new Ui::MainView} {
     }
   });
 
+  ui->remotes_table->setModel(&remote_model.model);
+
   show();
 }
 
@@ -45,6 +47,15 @@ void MainView::showProfile(std::string profile_path) {
 
 void MainView::popupError(std::string error) {
   QMessageBox::critical(this, tr("error"), error.c_str());
+}
+
+void MainView::setRemotes(const std::vector<IConan::Remote>& remotes) {
+  remote_model.reset(remotes);
+
+  // ensure all text in column are visible
+  ui->remotes_table->setVisible(false);
+  ui->remotes_table->resizeColumnsToContents();
+  ui->remotes_table->setVisible(true);
 }
 
 }  // namespace conanqt

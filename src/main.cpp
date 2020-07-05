@@ -1,75 +1,10 @@
 #include <iostream>
 #include <sstream>
+#include "conan.h"
 #include "interfaces/iconan.h"
 #include "qt/graphic_event_loop.h"
 #include "qt/main_view.h"
 #include "qt/process.h"
-
-namespace util {
-auto split_line(const std::string& chaine) {
-  std::vector<std::string> ret;
-  std::stringstream ss(chaine);
-  std::string sousChaine;
-  while (std::getline(ss, sousChaine)) {
-    ret.push_back(sousChaine);
-  }
-  return ret;
-}
-
-std::string join_path(std::string p1, const std::string& p2) {
-  char sep = '/';
-
-#ifdef _WIN32
-  sep = '\\';
-#endif
-
-  if (p1[p1.length()] != sep) {  // Need to add a
-    p1 += sep;                   // path separator
-  }
-  return (p1 + p2);
-}
-
-}  // namespace util
-
-struct Conan : public IConan {
-  explicit Conan(IProcess* process) : _process{process} {}
-
-  std::string version() const {
-    auto [ret_code, sout, serr] = _process->call({"--version"});
-
-    if (ret_code != 0) {
-      throw std::runtime_error(serr);
-    }
-
-    return sout;
-  }
-
-  std::string which() const override { return _process->which(); }
-
-  std::vector<std::string> profile_list() const override {
-    auto [ret_code, sout, serr] = _process->call({"profile", "list"});
-
-    if (ret_code != 0) {
-      throw std::runtime_error(serr);
-    }
-    return util::split_line(sout);
-  }
-
-  std::string profile_path(std::string profile) const override {
-    auto [ret_code, sout, serr] = _process->call({"config", "home"});
-
-    if (ret_code != 0) {
-      throw std::runtime_error(serr);
-    }
-    auto path = util::join_path(util::split_line(sout).at(0), "profiles");
-
-    return util::join_path(path, profile);
-  }
-
- private:
-  IProcess* _process;
-};
-
 struct ISettings {
   virtual void write(std::string key, std::string value) = 0;
   virtual std::string read(std::string key, std::string default_value) const = 0;
@@ -118,6 +53,16 @@ class ConanGui {
       view->onShowProfile([this](std::string profile) {
         auto profile_path = this->conan->profile_path(profile);
         this->view->showProfile(profile_path);
+      });
+
+      view->setRemotes(conan->remote_list());
+
+      view->onEnableRemote([this](std::string name, bool enabled) {
+        // apply cmd
+        this->conan->remote_enable(name, enabled);
+
+        // reload lit
+        view->setRemotes(conan->remote_list());
       });
     } catch (std::runtime_error e) {
       view->popupError(e.what());

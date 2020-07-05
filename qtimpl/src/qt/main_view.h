@@ -4,6 +4,7 @@
 #include <qobjectdefs.h>  // for Q_OBJECT, slots
 #include <qstring.h>      // for QString
 #include "interfaces/imainview.h"
+#include "qt/remote_list_model.h"
 
 namespace Ui {
 class MainView;
@@ -28,11 +29,17 @@ class MainView : public QMainWindow, public IMainView {
 
   void popupError(std::string error) override;
 
+  void setRemotes(const std::vector<IConan::Remote>& remotes) override;
+  void onEnableRemote(std::function<void(std::string, bool)> callback) override {
+    remote_model.onItemEnabledChanged(callback);
+  }
+
  private slots:
   void toto() {}
 
  private:
   Ui::MainView* ui{};
   std::function<void(std::string)> on_show_profile_callback;
+  RemoteListModel remote_model;
 };
 }  // namespace conanqt

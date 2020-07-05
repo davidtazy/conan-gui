@@ -9,9 +9,10 @@ endif()
 add_subdirectory(interface)
 add_subdirectory(qtimpl)
 
-add_library(conangui_core STATIC src/Conan.cpp)
+add_library(conangui_core STATIC src/conan.cpp src/util.cpp)
 add_library(conangui::core ALIAS conangui_core)
 target_compile_features(conangui_core PUBLIC cxx_std_17)
+target_include_directories(conangui_core PUBLIC src)
 target_link_libraries(conangui_core PUBLIC conangui::interfaces)
 
 # Application ############################################
@@ -20,7 +21,7 @@ target_link_libraries(conan-gui PRIVATE conangui::core conangui::qt)
 
 # test ###################################################
 find_package(Catch2 REQUIRED)
-add_executable(test_conan-gui-core test/test_game_logic.cpp test/main_catch.cpp)
+add_executable(test_conan-gui-core test/test_conan_api.cpp test/main_catch.cpp)
 target_compile_features(test_conan-gui-core PUBLIC cxx_std_17)
 
 target_compile_definitions(

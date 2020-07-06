@@ -25,6 +25,13 @@ MainView::MainView() : ui{new Ui::MainView} {
   show();
 }
 
+void MainView::clear() {
+  ui->path_line->setText("");
+  remote_model.model.clear();
+  ui->profile_combo->clear();
+  ui->conan_group->setTitle("");
+}
+
 void MainView::setVersion(std::string version) {
   ui->conan_group->setTitle(version.c_str());
 }

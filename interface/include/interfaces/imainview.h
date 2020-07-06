@@ -18,4 +18,6 @@ struct IMainView {
   virtual void onEnableRemote(std::function<void(std::string, bool)> callback) = 0;
 
   virtual void onSetConanExecutable(std::function<void(std::string)>) = 0;
+
+  virtual void clear() = 0;
 };

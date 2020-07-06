@@ -47,6 +47,7 @@ struct FakeView : public IMainView {
 
   std::vector<std::string> _show_profile_triggers;
   std::vector<std::string> _popup_error_triggers;
+  int _clear_view_counter{};
 
   std::vector<IConan::Remote> _remotes{};
   std::function<void(std::string name, bool enable)> _callback_remote_enable;
@@ -74,6 +75,17 @@ struct FakeView : public IMainView {
   void onSetConanExecutable(std::function<void(std::string)> callback) override {
     _callback_set_conan_executable = callback;
   }
+
+  void clear() override {
+    _version = "";
+    _path = "";
+    _profiles.clear();
+    _remotes.clear();
+    _clear_view_counter++;
+
+    // _show_profile_triggers.clear();
+    //_popup_error_triggers.clear();
+  }
 };
 
 struct Builder {
@@ -91,14 +103,16 @@ TEST_CASE("conangui use conan in path by default") {
   REQUIRE(b.process._path == "conan");
 }
 
-TEST_CASE(" popup error if conan app cannot be started") {
+TEST_CASE(" popup error and view cleared if conan app cannot be started") {
   Builder b;
 
+  REQUIRE(b.view._clear_view_counter == 0);
   b.conan.throw_error_on_version_call = true;
 
   b.gui.Reset();
 
   REQUIRE(b.view._popup_error_triggers.size() == 1);
+  REQUIRE(b.view._clear_view_counter == 1);
 }
 
 TEST_CASE("display conan version ") {

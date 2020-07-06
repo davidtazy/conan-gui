@@ -42,6 +42,7 @@ class ConanGui {
       });
 
     } catch (std::runtime_error e) {
+      view->clear();
       view->popupError(e.what());
     }
   }

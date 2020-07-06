@@ -38,6 +38,8 @@ class MainView : public QMainWindow, public IMainView {
     on_set_conan_executable_callback = callback;
   }
 
+  void clear() override;
+
  private slots:
   void onSelectConanExecutable();
 

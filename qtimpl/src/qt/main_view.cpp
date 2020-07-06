@@ -1,8 +1,11 @@
 #include "main_view.h"
 #include <QDesktopServices>
+#include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QUrl>
+#include <cassert>
 #include "ui_main_view.h"  // for MainView
 
 namespace conanqt {
@@ -14,6 +17,8 @@ MainView::MainView() : ui{new Ui::MainView} {
       this->on_show_profile_callback(this->ui->profile_combo->currentText().toStdString());
     }
   });
+
+  connect(ui->path_button, &QAbstractButton::clicked, this, &MainView::onSelectConanExecutable);
 
   ui->remotes_table->setModel(&remote_model.model);
 
@@ -56,6 +61,24 @@ void MainView::setRemotes(const std::vector<IConan::Remote>& remotes) {
   ui->remotes_table->setVisible(false);
   ui->remotes_table->resizeColumnsToContents();
   ui->remotes_table->setVisible(true);
+}
+
+void MainView::onSelectConanExecutable() {
+  assert(on_set_conan_executable_callback);
+
+  QMessageBox::StandardButton ret = QMessageBox::question(this, tr("select conan executable"),
+                                                          tr("use conan executable in the PATH ?"));
+
+  if (ret == QMessageBox::Yes) {
+    on_set_conan_executable_callback("conan");
+    return;
+  }
+
+  auto exe = QFileDialog::getOpenFileName(this, tr("select conan executable"));
+
+  if (exe.size()) {
+    on_set_conan_executable_callback(exe.toStdString());
+  }
 }
 
 }  // namespace conanqt

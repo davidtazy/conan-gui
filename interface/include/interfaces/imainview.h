@@ -16,4 +16,6 @@ struct IMainView {
 
   virtual void setRemotes(const std::vector<IConan::Remote>& remotes) = 0;
   virtual void onEnableRemote(std::function<void(std::string, bool)> callback) = 0;
+
+  virtual void onSetConanExecutable(std::function<void(std::string)>) = 0;
 };

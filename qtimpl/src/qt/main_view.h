@@ -34,12 +34,17 @@ class MainView : public QMainWindow, public IMainView {
     remote_model.onItemEnabledChanged(callback);
   }
 
+  void onSetConanExecutable(std::function<void(std::string)> callback) override {
+    on_set_conan_executable_callback = callback;
+  }
+
  private slots:
-  void toto() {}
+  void onSelectConanExecutable();
 
  private:
   Ui::MainView* ui{};
   std::function<void(std::string)> on_show_profile_callback;
   RemoteListModel remote_model;
+  std::function<void(std::string)> on_set_conan_executable_callback;
 };
 }  // namespace conanqt

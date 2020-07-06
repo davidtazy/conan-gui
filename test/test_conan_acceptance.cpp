@@ -43,6 +43,7 @@ struct FakeView : public IMainView {
   std::string _path{};
   std::vector<std::string> _profiles{};
   std::function<void(std::string)> _callback_on_show_profile;
+  std::function<void(std::string)> _callback_set_conan_executable;
 
   std::vector<std::string> _show_profile_triggers;
   std::vector<std::string> _popup_error_triggers;
@@ -69,6 +70,10 @@ struct FakeView : public IMainView {
   void onEnableRemote(std::function<void(std::string name, bool enable)> callback) override {
     _callback_remote_enable = callback;
   };
+
+  void onSetConanExecutable(std::function<void(std::string)> callback) override {
+    _callback_set_conan_executable = callback;
+  }
 };
 
 struct Builder {
@@ -105,7 +110,13 @@ TEST_CASE("display conan version ") {
 }
 
 TEST_CASE("user can select conan application path") {
-  // REQUIRE(false);
+  Builder b;
+
+  b.gui.Reset();
+
+  b.view._callback_set_conan_executable("other_conan");
+
+  REQUIRE(b.view._path == "other_conan");
 }
 
 TEST_CASE("display available profiles") {

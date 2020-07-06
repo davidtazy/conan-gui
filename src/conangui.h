@@ -35,6 +35,12 @@ class ConanGui {
         // reload lit
         view->setRemotes(conan->remote_list());
       });
+
+      view->onSetConanExecutable([this](std::string conan_executable) {
+        this->process->set_executable(conan_executable);
+        this->Reset();
+      });
+
     } catch (std::runtime_error e) {
       view->popupError(e.what());
     }

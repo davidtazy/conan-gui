@@ -44,7 +44,8 @@ conangui_add_test(
   LIBS
   conangui::core
   COV
-  src)
+  src
+  interfaces)
 
 conangui_add_test(
   TARGET
@@ -55,4 +56,5 @@ conangui_add_test(
   LIBS
   conangui::core
   COV
-  src)
+  src
+  interfaces)

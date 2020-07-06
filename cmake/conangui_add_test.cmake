@@ -24,12 +24,21 @@ function(conangui_add_test)
   if(KCOV)
     enable_testing()
 
+    set(include_args)
+    foreach(cov_dir ${ARG_COV})
+      # string(APPEND include_args " ")
+      string(APPEND include_args "${CMAKE_CURRENT_LIST_DIR}/${cov_dir},")
+    endforeach()
+
+    # string(SUBSTRING include_args 0 -1 include_args) message(FATAL_ERROR "****
+    # ${include_args}")
+
     add_test(
       NAME ${ARG_TARGET}_coverage
       COMMAND
-        ${KCOV} --exclude-pattern=/usr/
-        --include-path=${CMAKE_CURRENT_LIST_DIR}/${ARG_COV}
-        ${CMAKE_BINARY_DIR}/cov $<TARGET_FILE:${ARG_TARGET}>)
+        ${KCOV} --exclude-pattern=/usr/,.conan/data/
+        --include-pattern=${include_args} ${CMAKE_BINARY_DIR}/cov
+        $<TARGET_FILE:${ARG_TARGET}>)
   endif()
 
 endfunction()

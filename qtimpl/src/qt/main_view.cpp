@@ -22,6 +22,11 @@ MainView::MainView() : ui{new Ui::MainView} {
 
   ui->remotes_table->setModel(&remote_model.model);
 
+  connect(ui->button_install, &QAbstractButton::clicked, this, &MainView::onInstallCmd);
+
+  connect(ui->button_install_dir, &QAbstractButton::clicked, this, &MainView::onSelectInstallDir);
+  connect(ui->button_path_or_reference, &QAbstractButton::clicked, this,
+          &MainView::onSelectPathOrReference);
   show();
 }
 
@@ -42,8 +47,10 @@ void MainView::setPath(std::string path) {
 
 void MainView::setProfiles(std::vector<std::string> profiles) {
   ui->profile_combo->clear();
+  ui->combo_profile->clear();
   for (auto pr : profiles) {
     ui->profile_combo->addItem(pr.c_str());
+    ui->combo_profile->addItem(pr.c_str());
   }
 
   QString tooltip;
@@ -85,6 +92,56 @@ void MainView::onSelectConanExecutable() {
 
   if (exe.size()) {
     on_set_conan_executable_callback(exe.toStdString());
+  }
+}
+
+void MainView::setBuildPolicies(std::vector<std::string> policies) {
+  ui->combo_build_policy->clear();
+  QStringList policies_list;
+  for (const auto& p : policies) {
+    policies_list.push_back(p.c_str());
+  }
+  ui->combo_build_policy->addItems(policies_list);
+}
+
+void MainView::onInstallCmd() {
+  assert(on_install_cmdline_callback);
+
+  IConan::InstallCmdLine cmd;
+
+  cmd.install_folder = ui->line_install_dir->text().trimmed().toStdString();
+  cmd.path_or_reference = ui->line_path_or_reference->text().trimmed().toStdString();
+  if (ui->check_build_policy->isChecked()) {
+    cmd.policy = ui->combo_build_policy->currentText().toStdString();
+  }
+
+  if (ui->check_profile->isChecked()) {
+    cmd.profile = ui->combo_profile->currentText().toStdString();
+  }
+
+  if (ui->check_extra_params->isChecked()) {
+    auto params = ui->line_extra_params->text().split(" ", QString::SkipEmptyParts);
+    std::vector<std::string> args;
+    for (auto arg : params) {
+      args.push_back(arg.toStdString());
+    }
+  }
+
+  on_install_cmdline_callback(cmd);
+}
+
+void MainView::onSelectInstallDir() {
+  auto dir = QFileDialog::getExistingDirectory(this, tr("select install folder"));
+  if (dir.size()) {
+    ui->line_install_dir->setText(dir);
+  }
+}
+
+void MainView::onSelectPathOrReference() {
+  auto dir = QFileDialog::getExistingDirectory(this, tr("select path"), "",
+                                               QFileDialog::DontUseNativeDialog);
+  if (dir.size()) {
+    ui->line_path_or_reference->setText(dir);
   }
 }
 

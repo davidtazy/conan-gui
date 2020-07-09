@@ -20,4 +20,17 @@ struct IConan {
   };
   virtual std::vector<Remote> remote_list() const = 0;
   virtual void remote_enable(std::string name, bool enable) = 0;
+
+  struct InstallCmdLine {
+    std::string path_or_reference;
+    std::string install_folder;
+    std::string profile;
+    std::string policy;
+    std::vector<std::string> extra_params;
+  };
+
+  // build policies may be different through version
+  virtual std::vector<std::string> build_policies() const = 0;
+
+  virtual void install(InstallCmdLine cmd) = 0;
 };

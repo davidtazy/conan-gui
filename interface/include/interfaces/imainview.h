@@ -20,4 +20,8 @@ struct IMainView {
   virtual void onSetConanExecutable(std::function<void(std::string)>) = 0;
 
   virtual void clear() = 0;
+
+  virtual void setBuildPolicies(std::vector<std::string> policies) = 0;
+
+  virtual void onInstallCommand(std::function<void(IConan::InstallCmdLine)> callback) = 0;
 };

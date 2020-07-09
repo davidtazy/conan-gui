@@ -9,6 +9,7 @@ struct FakeConan : public IConan {
   bool throw_error_on_version_call{false};
   std::string str_version = "Conan version 1.25.2";
   std::vector<std::string> vect_profiles = {"default", "gcc10"};
+  std::vector<InstallCmdLine> install_cmd;
 
   const bool enabled = true, disabled = false, ssl = true, nossl = false;
   std::vector<IConan::Remote> _remotes = {
@@ -36,6 +37,11 @@ struct FakeConan : public IConan {
       }
     }
   };
+
+  std::vector<std::string> build_policies() const override {
+    return {"missing", "all", "outdated", "cascade"};
+  }
+  void install(InstallCmdLine cmd) override { install_cmd.push_back(cmd); }
 };
 
 struct FakeView : public IMainView {
@@ -51,6 +57,10 @@ struct FakeView : public IMainView {
 
   std::vector<IConan::Remote> _remotes{};
   std::function<void(std::string name, bool enable)> _callback_remote_enable;
+
+  std::function<void(IConan::InstallCmdLine)> _install_cmdline_callback;
+
+  std::vector<std::string> _policies;
 
   FakeView() = default;
 
@@ -86,6 +96,12 @@ struct FakeView : public IMainView {
     // _show_profile_triggers.clear();
     //_popup_error_triggers.clear();
   }
+
+  void onInstallCommand(std::function<void(IConan::InstallCmdLine)> callback) override {
+    _install_cmdline_callback = callback;
+  }
+
+  void setBuildPolicies(std::vector<std::string> policies) override { _policies = policies; }
 };
 
 struct Builder {
@@ -97,7 +113,7 @@ struct Builder {
   Builder() : gui{&process, &conan, &view} {}
 };
 
-TEST_CASE("conangui use conan in path by default") {
+TEST_CASE("conangui try to use conan in path by default") {
   Builder b;
 
   REQUIRE(b.process._path == "conan");
@@ -181,4 +197,26 @@ TEST_CASE("user can enable or disable remote") {
 
   b.view._callback_remote_enable("conan-center", b.conan.enabled);
   REQUIRE(b.view._remotes[0].enabled == true);
+}
+
+TEST_CASE("build policies are provided by conan and accesible to users") {
+  Builder b;
+  REQUIRE(b.view._policies.empty());
+
+  b.gui.Reset();
+
+  REQUIRE(b.view._policies.size() > 0);
+}
+
+TEST_CASE("user can call conan install command") {
+  Builder b;
+  b.gui.Reset();
+  IConan::InstallCmdLine cmd;
+  b.view._install_cmdline_callback(cmd);
+
+  REQUIRE(b.conan.install_cmd.size() == 1);
+}
+
+TEST_CASE("conan install output is dumped in terminal view") {
+  REQUIRE(false);
 }

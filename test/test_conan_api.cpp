@@ -88,5 +88,51 @@ TEST_CASE(" enable/disable remote") {
   REQUIRE(mock._args == Args{"remote", "disable", remote_name});
 }
 
+TEST_CASE("conan install with all parameters") {
+  IConan::InstallCmdLine cmd;
+  cmd.install_folder = "/a/b/c";
+  cmd.path_or_reference = "/d/e/f";
+  cmd.policy = "missing";
+  cmd.profile = "clang10";
+  cmd.extra_params = {"aaa", "bbb"};
+
+  auto mock = MockProcess{{0, "", ""}};
+  Conan conan{&mock};
+
+  REQUIRE(conan.toArgs(cmd) == Args{"install", "/d/e/f", "--install-folder", "/a/b/c", "--build",
+                                    "missing", "--profile", "clang10", "aaa", "bbb"});
+}
+
+TEST_CASE("conan install minimal parameters") {
+  IConan::InstallCmdLine cmd;
+  cmd.install_folder = "/a/b/c";
+  cmd.path_or_reference = "/d/e/f";
+
+  auto mock = MockProcess{{0, "", ""}};
+  Conan conan{&mock};
+
+  REQUIRE(conan.toArgs(cmd) == Args{"install", "/d/e/f", "--install-folder", "/a/b/c"});
+}
+
+TEST_CASE("conan install without path_or_reference throw an error") {
+  IConan::InstallCmdLine cmd;
+  cmd.install_folder = "/a/b/c";
+
+  auto mock = MockProcess{{0, "", ""}};
+  Conan conan{&mock};
+
+  REQUIRE_THROWS_AS(conan.toArgs(cmd), std::runtime_error);
+}
+
+TEST_CASE("conan install without install folder throw an error") {
+  IConan::InstallCmdLine cmd;
+  cmd.path_or_reference = "/d/e/f";
+
+  auto mock = MockProcess{{0, "", ""}};
+  Conan conan{&mock};
+
+  REQUIRE_THROWS_AS(conan.toArgs(cmd), std::runtime_error);
+}
+
 // https://github.com/arun11299/cpp-subprocess
 // http://templated-thoughts.blogspot.com/2016/03/sub-processing-with-modern-c.html

@@ -41,6 +41,15 @@ class ConanGui {
         this->Reset();
       });
 
+      view->setBuildPolicies(conan->build_policies());
+      view->onInstallCommand([this](IConan::InstallCmdLine cmd) {
+        try {
+          this->conan->install(cmd);
+        } catch (std::runtime_error e) {
+          this->view->popupError(e.what());
+        }
+      });
+
     } catch (std::runtime_error e) {
       view->clear();
       view->popupError(e.what());

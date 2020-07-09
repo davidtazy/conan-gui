@@ -80,6 +80,13 @@ struct Conan : public IConan {
     }
   }
 
+  std::vector<std::string> build_policies() const override {
+    return {"missing", "all", "outdated", "cascade"};
+  }
+
+  void install(InstallCmdLine cmd) override;
+  Args toArgs(const IConan::InstallCmdLine& cmd) const;
+
  private:
   IProcess* _process;
 };

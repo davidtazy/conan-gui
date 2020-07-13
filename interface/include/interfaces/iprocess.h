@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <string>
+#include <vector>
 
 enum class Std { Out, Err, Cmd, RetCode };
 using OutputStream = std::function<void(const std::string& data, Std)>;

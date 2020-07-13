@@ -1,7 +1,7 @@
 #pragma once
 #include <interfaces/iprocess.h>
 #include <util.h>
-#include <algorithm>
+#include <numeric>
 
 struct MockProcess : IProcess {
   Args _args;

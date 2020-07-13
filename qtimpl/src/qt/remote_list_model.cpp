@@ -49,8 +49,7 @@ void RemoteListModel::reset(std::vector<IConan::Remote> remotes) {
 }
 
 void RemoteListModel::onItemChanged(QStandardItem* item) {
-  bool ok;
-
+  
   if (QVariant v = item->data(static_cast<int>(ItemData::Enabled)); v.type() == QVariant::String) {
     std::string name = v.toString().toStdString();
     bool enabled = (item->checkState() == Qt::Checked);

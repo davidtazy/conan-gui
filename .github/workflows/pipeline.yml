@@ -1,0 +1,65 @@
+# This workflow will install Python and conan
+name: Github Action Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install conan==1.25.0
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: build  kcov  dependency
+      run: |
+        git clone https://github.com/davidtazy/conan-kcov kcov
+        cd kcov
+        conan --version
+        conan profile new default --detect
+        conan profile update settings.compiler.libcxx=libstdc++11 default
+        conan install cmake_installer/3.16.3@conan/stable  -g=virtualenv
+        conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+        source activate.sh
+        bash workflow.sh
+        cd ..
+        
+        
+
+    - name: install dependencies 
+      run: |
+        source kcov/activate.sh
+        mkdir build 
+        cd build
+        conan install .. 
+        cd ..
+        
+    - name: build
+      run: |
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake --build . --target all
+        cd ..
+        
+    - name: test
+      env: 
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        rm -rf kcov
+        cd build
+        ctest
+        cd cov/kcov-merged
+        bash <(curl -s https://codecov.io/bash)  -X gcov
+        

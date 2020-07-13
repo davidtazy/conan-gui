@@ -12,8 +12,8 @@ GraphicEventLoop::GraphicEventLoop(QApplication& app) : app(app) {
   app.setApplicationDisplayName("conan-gui");
   app.setApplicationName("conan-gui");
   app.setApplicationVersion("0.0.0");
-  app.setOrganizationDomain("conan.io");
-  app.setOrganizationName("conan");
+  app.setOrganizationDomain("davidtazy");
+  app.setOrganizationName("davidtazy");
 
   init_resource();
   QFontDatabase::addApplicationFont(":/DejaVuSans.ttf");

@@ -1,4 +1,4 @@
-# Conan GUI  ![conan logo](doc/logo-conan.png )
+# Conan GUI
 
 conan-gui is a desktop application to interact with conan.io package manager
 

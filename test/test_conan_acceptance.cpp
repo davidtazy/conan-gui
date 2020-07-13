@@ -41,7 +41,7 @@ struct FakeConan : public IConan {
   std::vector<std::string> build_policies() const override {
     return {"missing", "all", "outdated", "cascade"};
   }
-  void install(InstallCmdLine cmd) override { install_cmd.push_back(cmd); }
+  void install(InstallCmdLine cmd, OutputStream stream) override { install_cmd.push_back(cmd); }
 };
 
 struct FakeView : public IMainView {
@@ -58,7 +58,7 @@ struct FakeView : public IMainView {
   std::vector<IConan::Remote> _remotes{};
   std::function<void(std::string name, bool enable)> _callback_remote_enable;
 
-  std::function<void(IConan::InstallCmdLine)> _install_cmdline_callback;
+  std::function<void(IConan::InstallCmdLine, OutputStream)> _install_cmdline_callback;
 
   std::vector<std::string> _policies;
 
@@ -97,7 +97,8 @@ struct FakeView : public IMainView {
     //_popup_error_triggers.clear();
   }
 
-  void onInstallCommand(std::function<void(IConan::InstallCmdLine)> callback) override {
+  void onInstallCommand(
+      std::function<void(IConan::InstallCmdLine, OutputStream)> callback) override {
     _install_cmdline_callback = callback;
   }
 
@@ -212,11 +213,8 @@ TEST_CASE("user can call conan install command") {
   Builder b;
   b.gui.Reset();
   IConan::InstallCmdLine cmd;
-  b.view._install_cmdline_callback(cmd);
+  OutputStream stream;
+  b.view._install_cmdline_callback(cmd, stream);
 
   REQUIRE(b.conan.install_cmd.size() == 1);
-}
-
-TEST_CASE("conan install output is dumped in terminal view") {
-  REQUIRE(false);
 }

@@ -23,5 +23,6 @@ struct IMainView {
 
   virtual void setBuildPolicies(std::vector<std::string> policies) = 0;
 
-  virtual void onInstallCommand(std::function<void(IConan::InstallCmdLine)> callback) = 0;
+  virtual void onInstallCommand(
+      std::function<void(IConan::InstallCmdLine, OutputStream)> callback) = 0;
 };

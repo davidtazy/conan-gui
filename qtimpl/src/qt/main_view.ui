@@ -370,7 +370,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="plainTextEdit">
+         <widget class="QPlainTextEdit" name="text_edit_install">
           <property name="undoRedoEnabled">
            <bool>false</bool>
           </property>

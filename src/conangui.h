@@ -42,9 +42,9 @@ class ConanGui {
       });
 
       view->setBuildPolicies(conan->build_policies());
-      view->onInstallCommand([this](IConan::InstallCmdLine cmd) {
+      view->onInstallCommand([this](IConan::InstallCmdLine cmd, OutputStream callback) {
         try {
-          this->conan->install(cmd);
+          this->conan->install(cmd, callback);
         } catch (std::runtime_error e) {
           this->view->popupError(e.what());
         }

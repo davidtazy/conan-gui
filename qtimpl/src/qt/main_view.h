@@ -40,7 +40,8 @@ class MainView : public QMainWindow, public IMainView {
 
   void clear() override;
 
-  void onInstallCommand(std::function<void(IConan::InstallCmdLine)> callback) override {
+  void onInstallCommand(
+      std::function<void(IConan::InstallCmdLine, OutputStream)> callback) override {
     on_install_cmdline_callback = callback;
   }
 
@@ -57,6 +58,6 @@ class MainView : public QMainWindow, public IMainView {
   std::function<void(std::string)> on_show_profile_callback;
   RemoteListModel remote_model;
   std::function<void(std::string)> on_set_conan_executable_callback;
-  std::function<void(IConan::InstallCmdLine)> on_install_cmdline_callback;
+  std::function<void(IConan::InstallCmdLine, OutputStream)> on_install_cmdline_callback;
 };
 }  // namespace conanqt

@@ -2,6 +2,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include "interfaces/iprocess.h"
 struct IConan {
   virtual std::string version() const = 0;
   virtual std::vector<std::string> profile_list() const = 0;
@@ -32,5 +33,5 @@ struct IConan {
   // build policies may be different through version
   virtual std::vector<std::string> build_policies() const = 0;
 
-  virtual void install(InstallCmdLine cmd) = 0;
+  virtual void install(InstallCmdLine cmd, OutputStream stream) = 0;
 };

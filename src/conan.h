@@ -84,7 +84,7 @@ struct Conan : public IConan {
     return {"missing", "all", "outdated", "cascade"};
   }
 
-  void install(InstallCmdLine cmd) override;
+  void install(InstallCmdLine cmd, OutputStream stream) override;
   Args toArgs(const IConan::InstallCmdLine& cmd) const;
 
  private:

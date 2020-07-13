@@ -127,7 +127,32 @@ void MainView::onInstallCmd() {
     }
   }
 
-  on_install_cmdline_callback(cmd);
+  auto text_edit = this->ui->text_edit_install;
+
+  on_install_cmdline_callback(cmd, [text_edit](std::string data, Std std_type) {
+    Qt::GlobalColor colour = [std_type]() {
+      switch (std_type) {
+        case Std::Cmd:
+          return Qt::darkGreen;
+        case Std::Out:
+          return Qt::darkBlue;
+        case Std::Err:
+          return Qt::darkRed;
+        case Std::RetCode:
+          return Qt::black;
+      }
+      throw std::runtime_error("unknow StdType");
+    }();
+
+    QTextCharFormat tf = text_edit->currentCharFormat();
+    tf.setForeground(QBrush(colour));
+    text_edit->setCurrentCharFormat(tf);
+
+    if (std_type == Std::RetCode) {
+      text_edit->appendPlainText("\nreturn code:");
+    }
+    text_edit->appendPlainText(data.c_str());
+  });
 }
 
 void MainView::onSelectInstallDir() {

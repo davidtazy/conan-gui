@@ -2,7 +2,7 @@
 #include <functional>
 #include <string>
 
-enum class Std { Out, Err, Cmd };
+enum class Std { Out, Err, Cmd, RetCode };
 using OutputStream = std::function<void(const std::string& data, Std)>;
 
 struct OutProcess {
@@ -16,7 +16,7 @@ using Args = std::vector<std::string>;
 struct IProcess {
   virtual void set_executable(std::string path) = 0;
 
-  virtual int long_call(const Args& args) = 0;
+  virtual int long_call(const Args& args, OutputStream callback_p) = 0;
 
   virtual OutProcess call(const Args& args) = 0;
 

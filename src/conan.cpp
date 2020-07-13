@@ -36,26 +36,9 @@ Args Conan::toArgs(const IConan::InstallCmdLine& cmd) const {
 
   return args;
 }
-#include <iostream>
 
-std::ostream& operator<<(std::ostream& out, const std::vector<std::string>& vect) {
-  out << '{';
-  for (auto& v : vect) {
-    out << v << ',';
-  }
-  out << '}';
-  return out;
-}
-
-void Conan::install(InstallCmdLine cmd) {
+void Conan::install(InstallCmdLine cmd, OutputStream stream) {
   auto args = toArgs(cmd);
 
-  std::cout << args << std::endl;
-
-  auto [ret_code, sout, serr] = _process->call(args);
-
-  if (ret_code != 0) {
-    std::cout << sout << std::endl;
-    throw std::runtime_error(serr);
-  }
+  _process->long_call(args, stream);
 }

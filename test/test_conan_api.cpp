@@ -134,5 +134,40 @@ TEST_CASE("conan install without install folder throw an error") {
   REQUIRE_THROWS_AS(conan.toArgs(cmd), std::runtime_error);
 }
 
+TEST_CASE("conan install dump stdout and stderr in real time") {
+  IConan::InstallCmdLine cmd;
+  cmd.install_folder = "/a/b/c";
+  cmd.path_or_reference = "/d/e/f";
+
+  auto mock = MockProcess{{0, "blabla\nblibli", "bobo\nbubu"}};
+  Conan conan{&mock};
+
+  struct Out {
+    std::string data;
+    Std stream;
+    bool operator==(const Out& other) const { return data == other.data && stream == other.stream; }
+  };
+  std::vector<Out> outs;
+
+  OutputStream stream = [&outs](const std::string& data, Std stream) {
+    outs.push_back({data, stream});
+  };
+
+  conan.install(cmd, stream);
+  REQUIRE(outs.size() == 1);
+  REQUIRE(outs.front().stream == Std::Cmd);
+  REQUIRE(outs.front().data == " install /d/e/f --install-folder /a/b/c");
+  outs.clear();
+
+  mock.process_long_call_in_one_batch();
+
+  REQUIRE(outs.size() == 5);
+  REQUIRE(outs == std::vector<Out>{{"blabla", Std::Out},
+                                   {"blibli", Std::Out},
+                                   {"bobo", Std::Err},
+                                   {"bubu", Std::Err},
+                                   {"0", Std::RetCode}});
+}
+
 // https://github.com/arun11299/cpp-subprocess
 // http://templated-thoughts.blogspot.com/2016/03/sub-processing-with-modern-c.html

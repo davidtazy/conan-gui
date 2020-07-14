@@ -26,7 +26,7 @@ struct FakeConan : public IConan {
   std::vector<std::string> profile_list() const override { return vect_profiles; };
 
   std::string profile_path(std::string profile = "") const override {
-    return util::join_path("/home/.conan/profiles", profile);
+    return util::join_path("home",".conan","profiles", profile);
   };
 
   std::vector<Remote> remote_list() const override { return _remotes; };
@@ -166,7 +166,7 @@ TEST_CASE("user can open selected profile") {
   b.view._callback_on_show_profile("default");
 
   REQUIRE(b.view._show_profile_triggers.size() == 1);
-  REQUIRE(b.view._show_profile_triggers.front() == "/home/.conan/profiles/default");
+  REQUIRE(b.view._show_profile_triggers.front() == util::join_path("home",".conan","profiles","default"));
 }
 
 TEST_CASE("if no profile defined, user can open profiles dir") {
@@ -177,7 +177,7 @@ TEST_CASE("if no profile defined, user can open profiles dir") {
   b.view._callback_on_show_profile("");
 
   REQUIRE(b.view._show_profile_triggers.size() == 1);
-  REQUIRE(b.view._show_profile_triggers.front() == "/home/.conan/profiles/");
+  REQUIRE(b.view._show_profile_triggers.front() == util::join_path("home",".conan","profiles"));
 }
 
 TEST_CASE("display remotes status") {

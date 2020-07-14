@@ -58,10 +58,15 @@ std::string join_path(std::string p1, const std::string& p2) {
   sep = '\\';
 #endif
 
-  if (p1[p1.length()] != sep) {  // Need to add a
+  if (p1[p1.length() - 1] != sep && p2.size() > 0) {  // Need to add a
     p1 += sep;                   // path separator
   }
   return (p1 + p2);
 }
+
+std::string join_path(){
+    return "";
+}
+
 
 }  // namespace util

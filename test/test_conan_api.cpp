@@ -32,14 +32,14 @@ gcc9
 }
 
 TEST_CASE(" conan profile path") {
-  auto out = R"_(/home/user/.conan
-)_";
+  auto out = util::join_path("home","user",".conan");
+
 
   auto mock = MockProcess{{0, out, ""}};
   Conan conan{&mock};
 
-  REQUIRE(conan.profile_path() == "/home/user/.conan/profiles/");
-  REQUIRE(conan.profile_path("default") == "/home/user/.conan/profiles/default");
+  REQUIRE(conan.profile_path() == util::join_path("home","user",".conan","profiles"));
+  REQUIRE(conan.profile_path("default") == util::join_path("home","user",".conan","profiles","default"));
   REQUIRE(mock._args == Args{"config", "home"});
 }
 

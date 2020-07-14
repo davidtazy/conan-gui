@@ -6,7 +6,8 @@ enum ItemData { Enabled = Qt::UserRole + 1 };
 
 RemoteListModel::RemoteListModel() {
   reset({});
-  connect(&model, &QStandardItemModel::itemChanged, this, &RemoteListModel::onItemChanged);
+  //queued connection on windows to avoid  crash (to avoid redraw remotes from itemChanged event)
+  connect(&model, &QStandardItemModel::itemChanged, this, &RemoteListModel::onItemChanged,Qt::QueuedConnection);
 }
 
 QStandardItem* create_boolean_item(bool checked) {

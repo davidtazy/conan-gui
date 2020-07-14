@@ -24,7 +24,11 @@ target_include_directories(conangui_core PUBLIC src)
 target_link_libraries(conangui_core PUBLIC conangui::interfaces)
 
 # Application ############################################
-add_executable(conan-gui src/main.cpp)
+set(win_app_flag )
+if(MSVC)
+  set(win_app_flag WIN32)#no terminal
+endif()
+add_executable(conan-gui ${win_app_flag}  src/main.cpp)
 target_link_libraries(conan-gui PRIVATE conangui::core conangui::qt)
 
 # test ###################################################

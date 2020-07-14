@@ -13,6 +13,11 @@ class ConanGui {
   ConanGui(IProcess* process, IConan* conan, IMainView* view)
       : process(process), conan(conan), view(view) {
     process->set_executable("conan");
+
+    view->onSetConanExecutable([this](std::string conan_executable) {
+        this->process->set_executable(conan_executable);
+        this->Reset();
+      });
   }
 
   void Reset() {
@@ -36,10 +41,7 @@ class ConanGui {
         view->setRemotes(conan->remote_list());
       });
 
-      view->onSetConanExecutable([this](std::string conan_executable) {
-        this->process->set_executable(conan_executable);
-        this->Reset();
-      });
+      
 
       view->setBuildPolicies(conan->build_policies());
       view->onInstallCommand([this](IConan::InstallCmdLine cmd, OutputStream callback) {

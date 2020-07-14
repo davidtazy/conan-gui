@@ -3,19 +3,22 @@
 #include <interfaces/iconan.h>
 #include <interfaces/imainview.h>
 #include <interfaces/iprocess.h>
+#include <interfaces/isettings.h>
 
 class ConanGui {
   IProcess* process;
   IConan* conan;
   IMainView* view;
+  ISettings* settings;
 
  public:
-  ConanGui(IProcess* process, IConan* conan, IMainView* view)
-      : process(process), conan(conan), view(view) {
-    process->set_executable("conan");
+  ConanGui(IProcess* process, IConan* conan, IMainView* view, ISettings* settings)
+      : process(process), conan(conan), view(view),settings(settings) {
+    process->set_executable(settings->read("conan_executable","conan"));
 
     view->onSetConanExecutable([this](std::string conan_executable) {
         this->process->set_executable(conan_executable);
+        this->settings->write("conan_executable",conan_executable);
         this->Reset();
       });
   }

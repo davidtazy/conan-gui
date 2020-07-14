@@ -104,14 +104,32 @@ struct FakeView : public IMainView {
 
   void setBuildPolicies(std::vector<std::string> policies) override { _policies = policies; }
 };
+#include <map>
+struct FakeSettings:public ISettings{
+  std::map<std::string,std::string> dico;
+
+ void write(std::string key, std::string value)override{
+   dico[key] = value;
+ }
+   std::string read(std::string key, std::string default_value) const override{
+     auto it = dico.find(key);
+     if( it != dico.end()){
+       return it->second;
+     }else{
+       return default_value;
+     }
+   }
+};
 
 struct Builder {
   MockProcess process;
   FakeConan conan;
   FakeView view;
-  ConanGui gui;
+  FakeSettings settings;
 
-  Builder() : gui{&process, &conan, &view} {}
+  ConanGui gui;
+  
+  Builder() : gui{&process, &conan, &view, &settings} {}
 };
 
 TEST_CASE("conangui try to use conan in path by default") {
@@ -148,6 +166,16 @@ TEST_CASE("user can select conan application path") {
   b.view._callback_set_conan_executable("other_conan");
 
   REQUIRE(b.view._path == "other_conan");
+}
+
+TEST_CASE("user selected conan application path is saved ") {
+  Builder b;
+
+  b.gui.Reset();
+
+  b.view._callback_set_conan_executable("other_conan");
+
+  REQUIRE(b.settings.read("conan_executable","_") == "other_conan");
 }
 
 TEST_CASE("display available profiles") {

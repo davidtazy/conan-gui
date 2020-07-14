@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.10) #msvc and cxx_std_17
 project(conan-gui)
 
 # project options

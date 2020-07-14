@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.10) #msvc and cxx_std_17
 project(conan-gui-qtimpl)
 
 # set flags
@@ -26,7 +26,9 @@ add_library(
   src/qt/remote_list_model.cpp
   src/qt/graphic_event_loop.cpp
   src/qt/main_view.cpp
+  src/qt/settings.cpp
   resource/resource.qrc)
+
 target_compile_features(conangui_qt PUBLIC cxx_std_17)
 target_include_directories(conangui_qt PUBLIC src)
 target_link_libraries(conangui_qt PUBLIC Qt5::Widgets conangui::interfaces)

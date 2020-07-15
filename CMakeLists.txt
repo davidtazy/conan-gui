@@ -26,10 +26,18 @@ target_link_libraries(conangui_core PUBLIC conangui::interfaces)
 # Application ############################################
 set(win_app_flag )
 if(MSVC)
-  set(win_app_flag WIN32)#no terminal
+  set(win_app_flag WIN32 src/resource.rc)#no terminal + icon
 endif()
 add_executable(conan-gui ${win_app_flag}  src/main.cpp)
 target_link_libraries(conan-gui PRIVATE conangui::core conangui::qt)
+
+# Installation ##########################################
+install(TARGETS conan-gui DESTINATION . )
+
+install(SCRIPT deploy/deploy_qt.cmake) 
+
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+include(InstallRequiredSystemLibraries)
 
 # test ###################################################
 
